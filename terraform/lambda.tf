@@ -15,30 +15,25 @@ provider "aws" {
   region = var.lambda_aws_region
 }
 
-# Generate unique IDs for resources
 resource "random_id" "token_bucket_id" {
   byte_length = 4
 }
 
-# S3 Bucket for storing the access token
 resource "aws_s3_bucket" "oauth_token_bucket" {
   provider = aws.lambda
   bucket   = "oauth-token-storage-${random_id.token_bucket_id.hex}"
 }
 
-# SNS Topic
 resource "aws_sns_topic" "lambda_success_topic" {
   name = "lambda-success-topic"
 }
 
-# SNS Topic Subscription (Email)
 resource "aws_sns_topic_subscription" "email_subscription" {
   topic_arn = aws_sns_topic.lambda_success_topic.arn
   protocol  = "email"
   endpoint  = var.sns_email
 }
 
-# IAM Role for Lambda
 resource "aws_iam_role" "lambda_execution_role" {
   provider = aws.lambda
   name     = "lambda_execution_role"
@@ -57,7 +52,6 @@ resource "aws_iam_role" "lambda_execution_role" {
   })
 }
 
-# IAM Role Policy for Lambda (S3, Secrets Manager, and SNS access)
 resource "aws_iam_role_policy" "lambda_policy" {
   provider = aws.lambda
   name     = "lambda_execution_policy"
@@ -109,12 +103,10 @@ resource "aws_iam_role_policy" "lambda_policy" {
 }
 
 
-# Reference the existing secret instead of creating a new one
 data "aws_secretsmanager_secret" "existing_oauth_secret" {
   name = "oauth_secret"
 }
 
-# Create a new secret version for the existing secret
 resource "aws_secretsmanager_secret_version" "oauth_secret_version" {
   provider      = aws.lambda
   secret_id     = data.aws_secretsmanager_secret.existing_oauth_secret.id
@@ -130,7 +122,6 @@ data "archive_file" "lambda_zip" {
   output_path = "${path.module}/lambda_function_payload.zip"
 }
 
-# Lambda Function to collect OAuth2 token and upload it to S3
 resource "aws_lambda_function" "oauth2_lambda" {
   provider         = aws.lambda
   filename         = data.archive_file.lambda_zip.output_path
@@ -153,7 +144,6 @@ resource "aws_lambda_function" "oauth2_lambda" {
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 }
 
-# EventBridge Rule to schedule the Lambda function monthly
 # resource "aws_cloudwatch_event_rule" "monthly_schedule" {
 #   provider            = aws.lambda
 #   name                = "invoke-oauth2-lambda-monthly"
@@ -161,7 +151,6 @@ resource "aws_lambda_function" "oauth2_lambda" {
 #   schedule_expression = "cron(0 0 1 * ? *)"
 # }
 
-# EventBridge Rule to schedule the Lambda function at 15 minutes past each hour
 resource "aws_cloudwatch_event_rule" "monthly_schedule" {
   provider            = aws.lambda
   name                = "invoke-oauth2-lambda-hourly"
@@ -169,7 +158,6 @@ resource "aws_cloudwatch_event_rule" "monthly_schedule" {
   schedule_expression = "cron(15 * * * ? *)"
 }
 
-# EventBridge Target to link the rule to the Lambda function
 resource "aws_cloudwatch_event_target" "invoke_lambda" {
   provider  = aws.lambda
   rule      = aws_cloudwatch_event_rule.monthly_schedule.name
@@ -177,7 +165,6 @@ resource "aws_cloudwatch_event_target" "invoke_lambda" {
   arn       = aws_lambda_function.oauth2_lambda.arn
 }
 
-# Lambda permission to allow EventBridge to invoke the Lambda function
 resource "aws_lambda_permission" "allow_eventbridge" {
   provider      = aws.lambda
   statement_id  = "AllowExecutionFromEventBridge"
@@ -187,7 +174,6 @@ resource "aws_lambda_permission" "allow_eventbridge" {
   source_arn    = aws_cloudwatch_event_rule.monthly_schedule.arn
 }
 
-# Input Variables
 variable "api_key" {
   description = "The API key for the OAuth request"
   type        = string
