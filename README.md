@@ -1,6 +1,6 @@
 # AWS OAuth Key Collection Project
 
-This project collects OAuth tokens from an external API and stores them securely in an AWS S3 bucket. Notifications are sent via AWS SNS when the token is successfully stored. The project is managed using Terraform, which automates the provisioning of the AWS infrastructure.
+A Terraform-provisioned AWS cloud pipeline project that automates OAuth token retrieval from an external API, securely storing it in S3 with AWS Secrets Manager for secure access.
 
 ## AWS Servcies
 
