@@ -50,3 +50,13 @@ AWS Lambda automates the token retrieval process, S3 ensures secure storage with
 ## Future Plans
 - ETL Pipeline: Integrate this OAuth token with a future ETL pipeline to fetch data from the API and store it in an S3 bucket or an RDS database.
 - RDS Integration: Extend the project to transfer data collected via the API into an RDS database for further processing and analysis.
+
+## Contact Me
+- Visit my [LinkedIn](https://www.linkedin.com/in/obj809/) for more details.
+- Check out my [GitHub](https://github.com/cyberforge1) for more projects.
+- Or send me an email at obj809@gmail.com
+<br />
+Thanks for your interest in this project. Feel free to reach out with any thoughts or questions.
+<br />
+<br />
+Oliver Jenkins © 2024
