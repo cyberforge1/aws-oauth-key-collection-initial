@@ -3,7 +3,6 @@
 ## Project Overview
 A Terraform-provisioned AWS cloud pipeline that automates the retrieval of OAuth tokens from an external API, securely storing them in S3 and managing API credentials with AWS Secrets Manager for secure access.
 
-## Infrastructure Summary 
 AWS Lambda automates the token retrieval process, S3 ensures secure storage with encryption, Secrets Manager safely stores and manages credentials, and SNS sends notifications for successful or failed executions. The entire process is triggered automatically on a schedule managed by CloudWatch Events.
 
 ## AWS Services
