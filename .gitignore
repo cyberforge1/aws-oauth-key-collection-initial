@@ -1,0 +1,29 @@
+# Environment variables
+.env
+
+# Python virtual environment
+venv/
+
+# Lambda package (dependencies)
+lambda_package/
+
+# Terraform state and lock files
+terraform/.terraform/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.lock.hcl
+
+# Build artifacts
+lambda_function_payload.zip
+
+# Credentials and sensitive data
+request/credentials.txt
+
+# Node.js lock file (if using npm)
+package-lock.json
+
+# macOS specific files
+.DS_Store
+
+# Logs
+*.log
