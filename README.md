@@ -6,7 +6,7 @@ A Terraform-provisioned AWS cloud pipeline that automates the retrieval of OAuth
 AWS Lambda automates the token retrieval process, S3 ensures secure storage with encryption, Secrets Manager safely stores and manages credentials, and SNS sends notifications for successful or failed executions. The entire process is triggered automatically on a schedule managed by CloudWatch Events.
 
 ## Screenshot
-![Project Diagram](diagrams/aws-oauth-key-diagram-light.png)
+![Project Diagram](diagrams/aws-oauth-key-diagram-dark.png)
 
 ## AWS Services
 
