@@ -1,9 +1,7 @@
 # AWS OAuth Key Collection
 
 ## Project Overview
-A Terraform-provisioned AWS pipeline that automates OAuth token retrieval from an external API using Lambda, EventBridge, and S3. This pipeline is designed to securely fetch, store, and notify about API access tokens on a scheduled basis.
-
-AWS Lambda handles the token retrieval process, storing the token securely in S3 and sending a notification through SNS upon successful execution. The credentials are managed with AWS Secrets Manager, ensuring secure access to sensitive information. The entire process runs on a schedule defined by CloudWatch Events.
+A Terraform-provisioned AWS pipeline that automates the secure retrieval, storage, and notification of OAuth access tokens from an external API. Using AWS Lambda to fetch tokens, S3 to store them, and SNS to send notifications, the process is securely managed with Secrets Manager and runs on a schedule defined by CloudWatch Events.
 
 ## Screenshot
 ![Project Diagram](diagrams/aws-oauth-key-diagram-dark.png "AWS OAuth Key Collection Architecture")
