@@ -1,55 +1,78 @@
-# AWS OAuth Key Collection Project
+# AWS OAuth Key Collection
 
 ## Project Overview
-A Terraform-provisioned AWS pipeline automating OAuth token retrieval from an external API, utilising Lambda, EventBridge, and S3 for efficient orchestration and storage.
+A Terraform-provisioned AWS pipeline that automates OAuth token retrieval from an external API using Lambda, EventBridge, and S3. This pipeline is designed to securely fetch, store, and notify about API access tokens on a scheduled basis.
 
-AWS Lambda automates the token retrieval process, S3 ensures secure storage with encryption, Secrets Manager safely stores and manages credentials, and SNS sends notifications for successful or failed executions. The entire process is triggered automatically on a schedule managed by CloudWatch Events.
+AWS Lambda handles the token retrieval process, storing the token securely in S3 and sending a notification through SNS upon successful execution. The credentials are managed with AWS Secrets Manager, ensuring secure access to sensitive information. The entire process runs on a schedule defined by CloudWatch Events.
 
 ## Screenshot
-![Project Diagram](diagrams/aws-oauth-key-diagram-dark.png)
-
-## AWS Services
-
-### 1. AWS Lambda
-- **Function**: The core of this project. A Lambda function is used to retrieve an OAuth access token from an external API and store it in an S3 bucket.
-- **Handler**: The Lambda function handler is `lambda_function.lambda_handler`, written in Python. It performs the following tasks:
-  1. Fetches the OAuth access token using API credentials.
-  2. Stores the token in an S3 bucket.
-  3. Sends a notification through SNS.
-
-### 2. AWS S3 (Simple Storage Service)
-- **Function**: S3 is used to store the OAuth access token securely.
-- **Bucket**: A dynamically named S3 bucket is created by Terraform, and the access token is stored as a text file (`access_token.txt`).
-
-### 3. AWS SNS (Simple Notification Service)
-- **Function**: SNS is used to send notifications about the success or failure of the Lambda function.
-- **Topic**: Terraform creates an SNS topic `lambda-success-topic`, and a notification is sent to the email subscription when the function executes successfully.
-
-### 4. AWS IAM (Identity and Access Management)
-- **Function**: IAM roles and policies grant permissions to the Lambda function to access S3, Secrets Manager, and SNS.
-- **Role**: The Lambda function is assigned an execution role that allows it to interact with the required services.
-
-### 5. AWS Secrets Manager
-- **Function**: Stores sensitive API credentials (API key and secret) securely.
-- **Purpose**: The Lambda function retrieves the stored secrets to authenticate the request for the OAuth token.
-
-### 6. AWS CloudWatch Events (EventBridge)
-- **Function**: CloudWatch Events is used to trigger the Lambda function automatically at 15 minutes past every hour.
-- **Event Rule**: The rule is defined using a cron schedule (`cron(15 * * * ? *)`) to run the Lambda function periodically.
-
-### 7. Terraform
-- **Function**: Terraform is used to define and provision the AWS infrastructure (Lambda, S3, SNS, IAM, Secrets Manager, and CloudWatch Event rules).
-- **Benefits**: Infrastructure as code allows for easy deployment and management of cloud resources.
-
-## Usage
-- The Lambda function runs automatically every hour, fetching the OAuth token and storing it in the S3 bucket.
-- Upon successful execution, an email notification is sent to the specified email via SNS.
-- The token can be retrieved from the S3 bucket as needed.
+![Project Diagram](diagrams/aws-oauth-key-diagram-dark.png "AWS OAuth Key Collection Architecture")
 
 
-## Future Plans
-- ETL Pipeline: Integrate this OAuth token with a future ETL pipeline to fetch data from the API and store it in an S3 bucket or an RDS database.
-- RDS Integration: Extend the project to transfer data collected via the API into an RDS database for further processing and analysis.
+## Table of Contents
+- [Goals & MVP](#goals--mvp)
+- [Tech Stack](#tech-stack)
+- [How To Use](#how-to-use)
+- [Design Goals](#design-goals)
+- [Project Features](#project-features)
+- [Additions & Improvements](#additions--improvements)
+- [Learning Highlights](#learning-highlights)
+- [Known Issues](#known-issues)
+- [Challenges](#challenges)
+
+
+## Goals & MVP
+The goal of this project is to automate the retrieval and secure storage of OAuth access tokens from an external API. Using AWS services and Terraform, the project establishes a reliable, serverless process that retrieves tokens at regular intervals, stores them in S3, and notifies a subscriber via SNS.
+
+## Tech Stack
+- AWS Lambda
+- AWS S3
+- AWS SNS
+- AWS IAM
+- AWS Secrets Manager
+- AWS CloudWatch Events (EventBridge)
+- Terraform
+- Python (Boto3)
+
+## How To Use
+1. Deploy the infrastructure using Terraform to set up the Lambda function, S3 bucket, SNS topic, Secrets Manager entries, and CloudWatch Events.
+2. Store the necessary API credentials in AWS Secrets Manager (API key and API secret).
+3. The Lambda function will automatically run according to the CloudWatch Events schedule, fetch the OAuth token, and store it in the designated S3 bucket.
+4. Subscribers to the SNS topic will receive a notification upon each successful token retrieval and storage.
+
+## Design Goals
+- **Security**: Securely handle and store sensitive API credentials and tokens using AWS Secrets Manager and IAM roles.
+- **Reliability**: Ensure token retrieval occurs on schedule, with error handling and notifications for failures.
+- **Automation**: Fully automate the token retrieval and storage process to reduce manual intervention.
+- **Scalability**: Design the solution to be adaptable for future integrations with additional APIs or data storage solutions.
+
+## Project Features
+- [x] Automatic retrieval and storage of OAuth tokens from an external API
+- [x] Secure storage of tokens in an S3 bucket
+- [x] Notifications sent via SNS on successful execution
+- [x] Credential management using AWS Secrets Manager
+- [x] Infrastructure provisioned with Terraform for consistent setup
+
+## Additions & Improvements
+- [ ] Integration with a downstream ETL pipeline to utilize the stored OAuth token for further data processing
+- [ ] Database storage option to store OAuth tokens in an RDS database for centralized access
+- [ ] Implement retry logic within the Lambda function for increased reliability
+- [ ] Enhanced logging with CloudWatch Logs for better monitoring and debugging
+
+## Learning Highlights
+- Configuring AWS Secrets Manager to securely store and retrieve sensitive information in a Lambda environment
+- Using Terraform to automate AWS infrastructure deployment and manage resources effectively
+- Leveraging CloudWatch Events (EventBridge) to schedule Lambda function executions
+- Learning to handle IAM role permissions across multiple AWS services for secure access
+
+## Known Issues
+- If the external API is unavailable, the Lambda function fails to retrieve the token and raises an error.
+- Tokens stored in S3 do not have an expiration check; tokens may become invalid if not refreshed in a timely manner.
+
+## Challenges
+- Implementing secure storage and retrieval of secrets with Secrets Manager.
+- Managing IAM permissions to allow Lambda access to S3, SNS, and Secrets Manager.
+- Scheduling Lambda executions with CloudWatch Events to ensure timely token retrieval.
 
 ## Contact Me
 - Visit my [LinkedIn](https://www.linkedin.com/in/obj809/) for more details.
@@ -60,4 +83,3 @@ Thanks for your interest in this project. Feel free to reach out with any though
 <br />
 <br />
 Oliver Jenkins © 2024
-
